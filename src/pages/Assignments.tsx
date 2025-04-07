@@ -25,7 +25,7 @@ const dummyAssignments: Assignment[] = [
     dueDate: "2024-04-15",
     subject: "Data Structures",
     semester: 3,
-    department: "Computer Science"
+    department: "Computer Science Engineering"
   },
   {
     _id: "2",
@@ -52,7 +52,7 @@ const dummyAssignments: Assignment[] = [
     dueDate: "2024-04-30",
     subject: "Web Development",
     semester: 5,
-    department: "Computer Science"
+    department: "Information Technology"
   },
   {
     _id: "5",
@@ -61,7 +61,43 @@ const dummyAssignments: Assignment[] = [
     dueDate: "2024-05-05",
     subject: "Operating Systems",
     semester: 4,
-    department: "Computer Science"
+    department: "Computer Science Engineering"
+  },
+  {
+    _id: "6",
+    title: "Circuit Theory Assignment",
+    description: "Analyze and solve complex AC circuit problems using mesh and nodal analysis.",
+    dueDate: "2024-04-18",
+    subject: "Circuit Theory",
+    semester: 3,
+    department: "Electronics and Communication Engineering"
+  },
+  {
+    _id: "7",
+    title: "Mechanics of Solids",
+    description: "Solve problems related to stress, strain, and deformation in solid materials.",
+    dueDate: "2024-04-22",
+    subject: "Mechanics",
+    semester: 4,
+    department: "Mechanical Engineering"
+  },
+  {
+    _id: "8",
+    title: "Structural Analysis",
+    description: "Analyze different types of structures under various loading conditions.",
+    dueDate: "2024-04-28",
+    subject: "Structures",
+    semester: 5,
+    department: "Civil Engineering"
+  },
+  {
+    _id: "9",
+    title: "Power Systems",
+    description: "Design and analyze electrical power transmission and distribution systems.",
+    dueDate: "2024-05-02",
+    subject: "Power Systems",
+    semester: 6,
+    department: "Electrical Engineering"
   }
 ];
 
@@ -74,6 +110,16 @@ const Assignments = () => {
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement }>({});
   const [filter, setFilter] = useState({ semester: '', subject: '', department: '' });
+
+  // Add department mapping for acronyms
+  const departmentMap: Record<string, string[]> = {
+    'CSE': ['Computer Science', 'Computer Science Engineering'],
+    'ECE': ['Electronics and Communication Engineering', 'Electronics Engineering'],
+    'ME': ['Mechanical Engineering'],
+    'CE': ['Civil Engineering'],
+    'EE': ['Electrical Engineering'],
+    'IT': ['Information Technology']
+  };
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
@@ -169,12 +215,35 @@ const Assignments = () => {
     }
   };
 
+  // Enhanced filter function to support department acronyms
   const filteredAssignments = assignments.filter(assignment => {
-    return (
-      (!filter.semester || assignment.semester.toString() === filter.semester) &&
-      (!filter.subject || assignment.subject.toLowerCase().includes(filter.subject.toLowerCase())) &&
-      (!filter.department || assignment.department.toLowerCase().includes(filter.department.toLowerCase()))
-    );
+    // Semester filter
+    const semesterMatch = !filter.semester || assignment.semester.toString() === filter.semester;
+    
+    // Subject filter
+    const subjectMatch = !filter.subject || 
+      assignment.subject.toLowerCase().includes(filter.subject.toLowerCase());
+    
+    // Enhanced department filter
+    let departmentMatch = !filter.department;
+    
+    if (filter.department) {
+      const searchTerm = filter.department.toUpperCase();
+      
+      // Direct match with department name
+      if (assignment.department.toLowerCase().includes(filter.department.toLowerCase())) {
+        departmentMatch = true;
+      } 
+      // Check if search term is an acronym
+      else if (Object.keys(departmentMap).includes(searchTerm)) {
+        // Check if the assignment's department is in the mapped full names
+        departmentMatch = departmentMap[searchTerm].some(dept => 
+          assignment.department.toLowerCase().includes(dept.toLowerCase())
+        );
+      }
+    }
+    
+    return semesterMatch && subjectMatch && departmentMatch;
   });
 
   if (loading) {
@@ -213,28 +282,121 @@ const Assignments = () => {
               <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
                 Subject
               </label>
-              <input
-                type="text"
-                id="subject"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder="Filter by subject..."
-                value={filter.subject}
-                onChange={(e) => setFilter(prev => ({ ...prev, subject: e.target.value }))}
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  id="subject"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 pr-10"
+                  placeholder="Filter by subject..."
+                  value={filter.subject}
+                  onChange={(e) => setFilter(prev => ({ ...prev, subject: e.target.value }))}
+                />
+                {filter.subject && (
+                  <button
+                    onClick={() => setFilter(prev => ({ ...prev, subject: '' }))}
+                    className="absolute inset-y-0 right-0 mt-1 flex items-center pr-3 text-gray-400 hover:text-gray-500"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
             </div>
             <div>
               <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-1">
                 Department
               </label>
-              <input
-                type="text"
-                id="department"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder="Filter by department..."
-                value={filter.department}
-                onChange={(e) => setFilter(prev => ({ ...prev, department: e.target.value }))}
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  id="department"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 pr-10"
+                  placeholder="Filter by department or code (e.g. CSE)..."
+                  value={filter.department}
+                  onChange={(e) => setFilter(prev => ({ ...prev, department: e.target.value }))}
+                />
+                {filter.department && (
+                  <button
+                    onClick={() => setFilter(prev => ({ ...prev, department: '' }))}
+                    className="absolute inset-y-0 right-0 mt-1 flex items-center pr-3 text-gray-400 hover:text-gray-500"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+              
+              <div className="mt-2 flex flex-wrap gap-2">
+                {Object.keys(departmentMap).map(acronym => (
+                  <button
+                    key={acronym}
+                    onClick={() => setFilter(prev => ({ ...prev, department: acronym }))}
+                    className={`text-xs px-2 py-1 rounded-md transition-colors ${
+                      filter.department.toUpperCase() === acronym
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {acronym}
+                  </button>
+                ))}
+              </div>
             </div>
+          </div>
+
+          {/* Active Filters */}
+          {(filter.semester || filter.subject || filter.department) && (
+            <div className="flex flex-wrap items-center gap-2 mb-6 bg-blue-50 p-3 rounded-md border border-blue-200">
+              <span className="text-sm font-medium text-blue-700">Active Filters:</span>
+              
+              {filter.semester && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  Semester: {filter.semester}
+                  <button 
+                    onClick={() => setFilter(prev => ({ ...prev, semester: '' }))}
+                    className="ml-1 text-blue-500 hover:text-blue-700"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              
+              {filter.subject && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  Subject: {filter.subject}
+                  <button 
+                    onClick={() => setFilter(prev => ({ ...prev, subject: '' }))}
+                    className="ml-1 text-blue-500 hover:text-blue-700"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              
+              {filter.department && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  Department: {filter.department}
+                  <button 
+                    onClick={() => setFilter(prev => ({ ...prev, department: '' }))}
+                    className="ml-1 text-blue-500 hover:text-blue-700"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              
+              <button
+                onClick={() => setFilter({ semester: '', subject: '', department: '' })}
+                className="ml-auto text-sm text-blue-600 hover:text-blue-800 font-medium"
+              >
+                Clear All
+              </button>
+            </div>
+          )}
+
+          {/* Show count of filtered assignments */}
+          <div className="mb-6 flex justify-between items-center">
+            <p className="text-sm text-gray-600">
+              Showing {filteredAssignments.length} of {assignments.length} assignments
+            </p>
           </div>
 
           {error && (
