@@ -119,9 +119,9 @@ const TechnicalEvents = () => {
           {techEvents.map(event => (
             <div 
               key={event.id} 
-              className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-md overflow-hidden`}
+              className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-md overflow-hidden h-full flex flex-col`}
             >
-              <div className="relative h-48 bg-blue-600">
+              <div className="relative h-48 bg-blue-600 flex-shrink-0">
                 <img 
                   src={event.image} 
                   alt={event.title} 
@@ -132,74 +132,76 @@ const TechnicalEvents = () => {
                   }}
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <h2 className="text-white text-2xl font-bold">{event.title}</h2>
+                  <h2 className="text-white text-2xl font-bold text-center px-4 truncate max-w-full">{event.title}</h2>
                 </div>
               </div>
               
-              <div className="p-6">
-                <div className="flex items-center mb-4">
-                  <div className={`${isDarkMode ? 'text-blue-400' : 'text-blue-600'} mr-3`}>
+              <div className="p-6 flex-grow flex flex-col">
+                <div className="flex items-start mb-4">
+                  <div className={`${isDarkMode ? 'text-blue-400' : 'text-blue-600'} mr-3 flex-shrink-0 mt-1`}>
                     {getEventIcon(event.title)}
                   </div>
-                  <p className="text-lg">{event.description}</p>
+                  <p className="text-lg line-clamp-3 overflow-hidden">{event.description}</p>
                 </div>
                 
-                <button
-                  onClick={() => handleJoin(event.id)}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-md font-medium"
-                >
-                  Join
-                </button>
+                <div className="mt-auto">
+                  <button
+                    onClick={() => handleJoin(event.id)}
+                    className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-md font-medium"
+                  >
+                    Join
+                  </button>
 
-                {currentEvent === event.id && (
-                  <div className="mt-4">
-                    <div className="space-y-2">
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        placeholder="Enter Member Name"
-                        className={`w-full px-3 py-2 border rounded-md ${
-                          isDarkMode 
-                            ? 'bg-gray-700 border-gray-600 text-white' 
-                            : 'bg-white border-gray-300 text-gray-900'
-                        }`}
-                      />
-                      <input
-                        type="text"
-                        name="urn"
-                        value={formData.urn}
-                        onChange={handleInputChange}
-                        placeholder="Enter URN"
-                        className={`w-full px-3 py-2 border rounded-md ${
-                          isDarkMode 
-                            ? 'bg-gray-700 border-gray-600 text-white' 
-                            : 'bg-white border-gray-300 text-gray-900'
-                        }`}
-                      />
-                      <button
-                        onClick={() => handleAddMember(event.id)}
-                        className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-md font-medium"
-                      >
-                        Add Member
-                      </button>
-                    </div>
-
-                    {members[event.id] && members[event.id].length > 0 && (
-                      <div className="mt-4">
-                        <h3 className="font-medium mb-2">Team Members:</h3>
-                        <ul className={`list-disc pl-5 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                          {members[event.id].map((member, index) => (
-                            <li key={index}>
-                              {member.name} ({member.urn})
-                            </li>
-                          ))}
-                        </ul>
+                  {currentEvent === event.id && (
+                    <div className="mt-4 overflow-hidden">
+                      <div className="space-y-2">
+                        <input
+                          type="text"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          placeholder="Enter Member Name"
+                          className={`w-full px-3 py-2 border rounded-md text-sm ${
+                            isDarkMode 
+                              ? 'bg-gray-700 border-gray-600 text-white' 
+                              : 'bg-white border-gray-300 text-gray-900'
+                          }`}
+                        />
+                        <input
+                          type="text"
+                          name="urn"
+                          value={formData.urn}
+                          onChange={handleInputChange}
+                          placeholder="Enter URN"
+                          className={`w-full px-3 py-2 border rounded-md text-sm ${
+                            isDarkMode 
+                              ? 'bg-gray-700 border-gray-600 text-white' 
+                              : 'bg-white border-gray-300 text-gray-900'
+                          }`}
+                        />
+                        <button
+                          onClick={() => handleAddMember(event.id)}
+                          className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-md font-medium"
+                        >
+                          Add Member
+                        </button>
                       </div>
-                    )}
-                  </div>
-                )}
+
+                      {members[event.id] && members[event.id].length > 0 && (
+                        <div className="mt-4">
+                          <h3 className="font-medium mb-2">Team Members:</h3>
+                          <ul className={`list-disc pl-5 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} max-h-40 overflow-y-auto`}>
+                            {members[event.id].map((member, index) => (
+                              <li key={index} className="truncate">
+                                {member.name} ({member.urn})
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           ))}
