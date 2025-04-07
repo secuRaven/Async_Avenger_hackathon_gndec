@@ -36,25 +36,65 @@ const Navbar = () => {
     navigate('/login');
   };
 
+  const isActive = (path: string) => {
+    return location.pathname === path ? true : false;
+  };
+
   const renderAuthLinks = () => (
-    <div className="flex space-x-4">
-      <Link to="/login" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+    <div className="flex space-x-2">
+      <Link 
+        to="/login" 
+        className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+          isActive('/login')
+            ? 'bg-blue-600 text-white shadow-md' 
+            : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700'
+        }`}
+      >
         Login
       </Link>
-      <Link to="/register" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+      <Link 
+        to="/register" 
+        className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+          isActive('/register')
+            ? 'bg-indigo-600 text-white shadow-md' 
+            : 'border border-indigo-500 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-gray-700'
+        }`}
+      >
         Register
       </Link>
     </div>
   );
 
+  const NavLink = ({ to, icon: Icon, children }: { to: string; icon: React.ElementType; children: React.ReactNode }) => (
+    <Link
+      to={to}
+      className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center ${
+        isActive(to)
+          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md' 
+          : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700'
+      }`}
+    >
+      <Icon className="h-5 w-5 mr-2" />
+      <span>{children}</span>
+    </Link>
+  );
+
   return (
-    <nav className="bg-white dark:bg-gray-800 shadow-lg">
+    <nav className={`${
+      isDarkMode 
+        ? 'bg-gray-800 text-white border-b border-gray-700' 
+        : 'bg-white text-gray-800 border-b border-gray-200 shadow-sm'
+    } sticky top-0 z-50`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
-              <GraduationCap className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-              <span className="ml-2 text-xl font-bold text-gray-800 dark:text-white">EduManager</span>
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-2 rounded-lg">
+                <GraduationCap className="h-6 w-6 text-white" />
+              </div>
+              <span className="ml-2 text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                EduManager
+              </span>
             </Link>
           </div>
 
@@ -64,49 +104,41 @@ const Navbar = () => {
             ) : !isAuthenticated ? (
               renderAuthLinks()
             ) : (
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
                 {isAdmin ? (
-                  <Link to="/admin" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
-                    <Users className="h-5 w-5 mr-1" />
-                    <span>Admin Panel</span>
-                  </Link>
+                  <NavLink to="/admin" icon={Users}>
+                    Admin Panel
+                  </NavLink>
                 ) : (
                   <>
-                    <Link to="/assignments" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
-                      <BookOpen className="h-5 w-5 mr-1" />
-                      <span>Assignments</span>
-                    </Link>
-                    <Link to="/sports" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
-                      <Trophy className="h-5 w-5 mr-1" />
-                      <span>Sports</span>
-                    </Link>
-                    <Link to="/tech" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
-                      <Cpu className="h-5 w-5 mr-1" />
-                      <span>Tech Events</span>
-                    </Link>
-                    <Link to="/profile" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
-                      <User className="h-5 w-5 mr-1" />
-                      <span>Profile</span>
-                    </Link>
-                    <Link to="/exams" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
-                      <FileText className="h-5 w-5 mr-1" />
-                      <span>Exams</span>
-                    </Link>
-                    <Link to="/fees" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
-                      <DollarSign className="h-5 w-5 mr-1" />
-                      <span>Fees</span>
-                    </Link>
-                    <Link to="/academic-performance" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
-                      <BarChart className="h-5 w-5 mr-1" />
-                      <span>Performance</span>
-                    </Link>
+                    <NavLink to="/assignments" icon={BookOpen}>
+                      Assignments
+                    </NavLink>
+                    <NavLink to="/sports" icon={Trophy}>
+                      Sports
+                    </NavLink>
+                    <NavLink to="/tech" icon={Cpu}>
+                      Tech Events
+                    </NavLink>
+                    <NavLink to="/profile" icon={User}>
+                      Profile
+                    </NavLink>
+                    <NavLink to="/exams" icon={FileText}>
+                      Exams
+                    </NavLink>
+                    <NavLink to="/fees" icon={DollarSign}>
+                      Fees
+                    </NavLink>
+                    <NavLink to="/academic-performance" icon={BarChart}>
+                      Performance
+                    </NavLink>
                   </>
                 )}
                 <button
                   onClick={handleLogout}
-                  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center"
+                  className="ml-2 px-4 py-2 rounded-md text-sm font-medium border border-red-300 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-gray-700 transition-all duration-200 flex items-center"
                 >
-                  <LogOut className="h-5 w-5 mr-1" />
+                  <LogOut className="h-5 w-5 mr-2" />
                   <span>Logout</span>
                 </button>
               </div>
@@ -115,13 +147,13 @@ const Navbar = () => {
             {/* Dark Mode Toggle */}
             <button
               onClick={toggleDarkMode}
-              className="ml-4 p-2 rounded-md text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              className="ml-4 p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
               aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {isDarkMode ? (
-                <Sun className="h-6 w-6" />
+                <Sun className="h-5 w-5" />
               ) : (
-                <Moon className="h-6 w-6" />
+                <Moon className="h-5 w-5" />
               )}
             </button>
           </div>
@@ -129,8 +161,20 @@ const Navbar = () => {
           {/* Mobile menu button */}
           <div className="flex items-center sm:hidden">
             <button
+              onClick={toggleDarkMode}
+              className="p-2 mr-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+              aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {isDarkMode ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </button>
+            
+            <button
               onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -139,71 +183,154 @@ const Navbar = () => {
       </div>
 
       {/* Mobile menu */}
-      <div className={`${isMenuOpen ? 'block' : 'hidden'} sm:hidden`}>
-        <div className="pt-2 pb-3 space-y-1">
+      <div className={`${isMenuOpen ? 'block' : 'hidden'} sm:hidden transition-all duration-300 ease-in-out`}>
+        <div className="px-2 pt-2 pb-3 space-y-1 max-h-[80vh] overflow-y-auto">
           {location.pathname === '/login' || location.pathname === '/register' ? (
-            renderAuthLinks()
+            <div className="flex flex-col space-y-2 px-2">
+              <Link
+                to="/login"
+                className={`px-3 py-2 rounded-md text-base font-medium ${
+                  isActive('/login')
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
+                    : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700'
+                }`}
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className={`px-3 py-2 rounded-md text-base font-medium ${
+                  isActive('/register')
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
+                    : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700'
+                }`}
+              >
+                Register
+              </Link>
+            </div>
           ) : !isAuthenticated ? (
-            renderAuthLinks()
+            <div className="flex flex-col space-y-2 px-2">
+              <Link
+                to="/login"
+                className={`px-3 py-2 rounded-md text-base font-medium ${
+                  isActive('/login')
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
+                    : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700'
+                }`}
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className={`px-3 py-2 rounded-md text-base font-medium ${
+                  isActive('/register')
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
+                    : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700'
+                }`}
+              >
+                Register
+              </Link>
+            </div>
           ) : (
             <>
               {isAdmin ? (
                 <Link
                   to="/admin"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
+                    isActive('/admin')
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
+                      : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700'
+                  }`}
                 >
+                  <Users className="h-5 w-5 mr-2" />
                   Admin Panel
                 </Link>
               ) : (
                 <>
                   <Link
                     to="/assignments"
-                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700"
+                    className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
+                      isActive('/assignments')
+                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
+                        : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700'
+                    }`}
                   >
+                    <BookOpen className="h-5 w-5 mr-2" />
                     Assignments
                   </Link>
                   <Link
                     to="/sports"
-                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700"
+                    className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
+                      isActive('/sports')
+                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
+                        : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700'
+                    }`}
                   >
+                    <Trophy className="h-5 w-5 mr-2" />
                     Sports
                   </Link>
                   <Link
                     to="/tech"
-                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700"
+                    className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
+                      isActive('/tech')
+                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
+                        : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700'
+                    }`}
                   >
+                    <Cpu className="h-5 w-5 mr-2" />
                     Tech Events
                   </Link>
                   <Link
                     to="/profile"
-                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700"
+                    className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
+                      isActive('/profile')
+                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
+                        : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700'
+                    }`}
                   >
+                    <User className="h-5 w-5 mr-2" />
                     Profile
                   </Link>
                   <Link
                     to="/exams"
-                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700"
+                    className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
+                      isActive('/exams')
+                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
+                        : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700'
+                    }`}
                   >
+                    <FileText className="h-5 w-5 mr-2" />
                     Exams
                   </Link>
                   <Link
                     to="/fees"
-                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700"
+                    className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
+                      isActive('/fees')
+                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
+                        : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700'
+                    }`}
                   >
+                    <DollarSign className="h-5 w-5 mr-2" />
                     Fees
                   </Link>
                   <Link
                     to="/academic-performance"
-                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700"
+                    className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
+                      isActive('/academic-performance')
+                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
+                        : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700'
+                    }`}
                   >
+                    <BarChart className="h-5 w-5 mr-2" />
                     Performance
                   </Link>
                 </>
               )}
               <button
                 onClick={handleLogout}
-                className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700"
+                className="w-full flex items-center px-3 py-2 rounded-md text-base font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-gray-700 mt-2"
               >
+                <LogOut className="h-5 w-5 mr-2" />
                 Logout
               </button>
             </>
