@@ -45,7 +45,7 @@ const TechnicalEvents = () => {
       id: 4,
       title: 'Tech Debate',
       description: 'Battle your opinions on AI, Blockchain & more!',
-      image: 'https://images.unsplash.com/photo-1560575193-2bca0eda0592?q=80&w=500&auto=format&fit=crop',
+      image: 'https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?q=80&w=500&auto=format&fit=crop',
       actionUrl: '/tech/debate'
     },
     {
@@ -126,6 +126,10 @@ const TechnicalEvents = () => {
                   src={event.image} 
                   alt={event.title} 
                   className="w-full h-full object-cover opacity-75"
+                  onError={(e) => {
+                    // If image fails to load, replace with a fallback
+                    e.currentTarget.src = `https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?q=80&w=500&auto=format&fit=crop`;
+                  }}
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <h2 className="text-white text-2xl font-bold">{event.title}</h2>
