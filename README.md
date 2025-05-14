@@ -1,0 +1,1 @@
+<h2>a Student Management System that efficiently manages and tracks all major aspects of a student's academic lifecycle. This includes student registration, fee payment status, exam form submissions, assignment submissions, internal marks (MSTs), and other relevant academic records.<h2>
